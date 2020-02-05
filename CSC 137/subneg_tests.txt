@@ -1,0 +1,247 @@
+Subneg
+
+ADD (2 + 5):
+
+10 9 3
+9 11 6
+10 9 -1
+0 2 5
+
+
+CMP/JGT (8 vs 4):
+
+7 6 9
+0 1 0
+4 8 0
+4 3 -1
+
+
+JMP (unconditional):
+
+4 3 6(jump location)
+0 1 6(jump location)
+4 3 -1
+
+
+LD (not useful)
+
+
+MOV (2 from memory[9] to memory[12]):
+
+9 10 3
+10 14 6
+9 11 -1
+1 0 0
+0 0 0
+
+
+ST (store 7):
+
+13 14 3
+14 16 6
+16 15 9
+15 17 12
+0 2 -1
+0 5 0
+
+
+Text from Example 8.2:
+
+Basically, recreate a simulation of a for loop adding all the elements from an array of size 8.
+To simplify the process, each example element will be in consecutive memory locations. I will
+sum 8 digits starting from 1: 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 = 36
+
+40 38 3
+38 41 6
+39 0 9
+39 4 12
+33 35 15 
+33 34 -1
+35 34 21
+35 35 24
+38 38 27
+39 33 30
+36 37 0
+2 7 0
+1 0 0
+-1 1 2
+3 4 5
+6 7 8
+
+0:40 38 3 // Stores negative values of the array
+3:38 41 6 // Adds (subtracts the negative) value to the next element
+6:39 0 9 // Increments memory[0] by 1
+9:39 4 12 // Increments memory[4] by 1
+12:33 35 15 // Stores the current array counter
+15:33 34 -1 // Checks to see if the counter is larger than n
+18:35 34 21 // Undoes the check
+21:35 35 24 // Resets memory[32] to 0
+24:38 38 27 // Resets memory[35] to 0
+27:39 33 30
+30:36 37 0 // Unconditionally jumps to memory[0]
+33:2 7 0 // In order: arrayCounter (starts at 2 because we compute the first two numbers already), n, temporary var. for the counter increment
+36:1 0 0 // In order: 1, 0, temp
+39:-1 1 2
+42:3 4 5
+45:6 7 8
+
+
+Fibonacci (n = 10):
+
+// Increment by 2 (Original)
+0  0  1
+2  0  6
+0  1  9
+0  0  12
+1  0  15
+0  2  18
+0  0  21
+45 41 24
+40 39 27
+39 41 30
+39 39 33
+44 41  3
+43 42 -1
+0  2  -8
+0  1  10
+-10 0 0
+
+0: 0  0  1
+3: 2  0  6
+6: 0  1  9
+9: 0  0  12
+12:1  0  15
+15:0  2  18
+18:0  0  21
+21:45 41 24 (fixes counter by adding 10)
+24:40 39 27
+27:39 41 30
+30:39 39 33
+33:44 41 3  (Jumps to 3 if n > counter / Subtracts 10 from counter)
+36:43 42 -1
+39:0  2  -8 (counter that increases by 2 / initialized to -8 because the counter fix will add 10)
+42:0  1  10 (n)
+45:-10 (-n) 0 0
+
+
+// Increment by 1 (Final Version - Fib10)
+0  0  1
+2  0  6
+0  1  9
+0  0  12
+54 50 15
+49 48 18
+48 50 21
+48 48 24
+1  0  27
+0  2  30
+0  0  33
+49 48 36
+48 50 39
+48 48 42
+53 50 3
+52 51 -1
+0  1  -9
+0  1  10
+-10 0 0
+
+0: 0  0  1
+3: 2  0  6
+6: 0  1  9
+9: 0  0  12
+12:54 50 15 (fixes counter by adding 10)
+15:49 48 18
+18:48 50 21
+21:48 48 24
+24:1  0  27
+27:0  2  30
+30:0  0  33
+33:49 48 36
+36:48 50 39
+39:48 48 42
+42:53 50 3  (Jumps to 3 if n > counter / Subtracts 10 from counter)
+45:52 51 -1
+48:0  1  -9 (counter that increases by 2 / initialized to 2-n because the counter fix will add n)
+51:0  1  10 (n)
+54:-10(-n) 0 0
+
+
+// Fib(30)
+0  0  1
+2  0  6
+0  1  9
+0  0  12
+54 50 15
+49 48 18
+48 50 21
+48 48 24
+1  0  27
+0  2  30
+0  0  33
+49 48 36
+48 50 39
+48 48 42
+53 50 3
+52 51 -1
+0  1  -29
+0  1  30
+-30 0 0
+
+// Fib(max) - Implementation 1 
+0  0  1
+2  0  6
+0  1  9
+0  0  12
+1  0  15
+0  2  18
+0  0  21
+1 36 24
+1 37 -1
+36 37 30
+36 36 33
+36 38 3
+0 1800000000 -1
+
+0: 0  0  1
+3: 2  0  6
+6: 0  1  9
+9: 0  0  12
+12:1  0  15
+15:0  2  18
+18:0  0  21
+21:1 36 24
+24:1 37 -1
+27:36 37 30
+30:36 36 33
+33:36 38 3
+36:0 1800000000 -1
+
+
+// Fib(max) - Implementation 2
+0  0  1
+2  0  6
+0  1  9
+0  0  12
+1  0  15
+0  2  18
+0  0  21
+2 36 24
+36 37 -1
+36 36 30
+37 37 33
+36 26 3
+0 0 0
+
+0: 0  0  1
+3: 2  0  6
+6: 0  1  9
+9: 0  0  12
+12:1  0  15
+15:0  2  18
+18:0  0  21
+21:2 36 24
+24:36 37 -1
+27:36 36 30
+30:37 37 33
+33:36 26 3
+36:0 0 0
