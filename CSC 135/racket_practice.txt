@@ -1,0 +1,23 @@
+(define (functionWinner f L M)
+  (cond ((empty? L) 2)
+        ((empty? M) 1)
+        ((and (empty? L) (empty? M)) 0)
+        ((< (funcWinHelper f L) (funcWinHelper f M)) 2)
+        ((> (funcWinHelper f L) (funcWinHelper f M)) 1)
+        ((= (funcWinHelper f L) (funcWinHelper f M)) 0)))
+
+(define (funcWinHelper f xs)
+  (if (empty? xs)
+      0
+      (if (f (first xs))
+          (+ 1 (funcWinHelper f (rest xs)))
+          (funcWinHelper f (rest xs)))))
+
+; Returns 1
+(functionWinner negative? '(8 -4 3 8) '(7 3 2 1 5))
+
+; Returns 2
+(functionWinner string? '(1 "a" "b" "c" 2 3) '("x" "y" "bless" 0 0 "five"))
+
+; Returns 0
+(functionWinner integer? '(6 9) '(9 6))
